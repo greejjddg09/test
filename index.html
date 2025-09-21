@@ -1,78 +1,287 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Тест</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EduGPT — качественное образование</title>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0f0b16;
+      --card: #10071a;
+      --muted: #bdbcdc;
+      --accent-1: #7c3aed;
+      --accent-2: #6b21a8;
+      --accent-3: linear-gradient(135deg,#7c3aed 0%,#5b21bf 100%);
+      --glass: rgba(255,255,255,0.03);
+      --radius: 14px;
+      --shadow: 0 8px 30px rgba(11,7,25,0.6);
+    }
+
+    * { box-sizing: border-box; }
+    html,body{ height:100%; margin:0; font-family:Inter,system-ui; background:var(--bg); color:#fff; }
+
+    .app { max-width:1200px; margin:28px auto; display:grid; grid-template-columns: 1fr 360px; gap:24px; padding:0 20px; }
+    header.topbar{ grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+    .brand { display:flex; gap:12px; align-items:center; }
+    .logo { width:44px;height:44px;border-radius:10px;background:var(--accent-3);display:flex;align-items:center;justify-content:center;font-weight:800; }
+    .title { font-size:18px;font-weight:700; }
+    .subtitle { font-size:12px;color:var(--muted); }
+    .actions { display:flex; gap:10px; align-items:center; }
+    .btn { padding:8px 12px;border-radius:10px;font-weight:600;border:0;cursor:pointer;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:white; }
+    .btn.ghost { background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); }
+    .main { background:var(--glass); padding:18px;border-radius:var(--radius); min-height:640px; }
+    .hero { display:flex; justify-content:space-between; gap:18px; margin-bottom:18px; }
+    .h1 { font-size:20px;font-weight:800; margin:0 0 6px 0; }
+    .lead { color:var(--muted); font-size:13px; }
+    .courses { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin-top:14px; }
+    .card { background:var(--glass); border-radius:12px; padding:12px; }
+    .course-title { font-weight:700; font-size:15px; }
+    .meta { color:var(--muted); font-size:12px; }
+    .lesson { margin-top:18px; padding:14px; background:var(--glass); border-radius:12px; }
+    .chat { position:sticky; top:28px; background:var(--glass); padding:12px;border-radius:12px; min-height:300px; display:flex; flex-direction:column; gap:12px; }
+    .chat .history { flex:1; overflow:auto; padding:8px; display:flex; flex-direction:column; gap:8px; }
+    .msg { max-width:85%; padding:10px 12px; border-radius:12px; font-size:14px; line-height:1.4; }
+    .msg.user { align-self:flex-end; background: rgba(124,58,237,0.12); }
+    .msg.bot { align-self:flex-start; background: rgba(255,255,255,0.02); color:var(--muted); }
+    .chat .composer { display:flex; gap:8px; }
+    .chat input { flex:1; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:#fff; }
+    .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center; padding:20px; z-index:60; }
+    .modal { width:100%; max-width:720px; background:var(--glass); border-radius:14px; padding:18px; }
+    @media(max-width:1000px){ .app{ grid-template-columns:1fr; padding-bottom:80px; } .chat{ position:relative; order:3;} }
+  </style>
 </head>
 <body>
-  <h1>Простой тест</h1>
 
-  <form id="quizForm">
-    <div class="question">
-      <h3>1. Столица Франции?</h3>
-      <label><input type="radio" name="q1" value="0"> Лондон</label><br>
-      <label><input type="radio" name="q1" value="1"> Париж</label><br>
-      <label><input type="radio" name="q1" value="0"> Берлин</label><br>
-      <label><input type="radio" name="q1" value="0"> Мадрид</label>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">EG</div>
+        <div>
+          <div class="title">EduGPT</div>
+          <div class="subtitle">Качественное образование — Цель ООН №4</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <!-- Telegram widget -->
+        <script async src="https://telegram.org/js/telegram-widget.js?22"
+          data-telegram-login="mirzotilloyev_bot"
+          data-size="large"
+          data-onauth="onTelegramAuth(user)"
+          data-request-access="write"></script>
+        <button class="btn" id="create-course">Я родитель</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="hero">
+        <div class="left">
+          <h2 class="h1">Курсы по цифровым навыкам</h2>
+          <p class="lead">Интерактивные уроки, тесты и бот, который присылает результаты в Telegram.</p>
+        </div>
+      </section>
+
+      <section class="courses" id="courses"></section>
+      <section class="lesson" id="lesson-area" style="display:none;">
+        <h3 id="lesson-title">Урок</h3>
+        <p id="lesson-body" class="lead"></p>
+        <div class="lesson-actions">
+          <button class="btn" id="start-test">Пройти тест</button>
+          <button class="btn ghost" id="back-to-courses">Назад к курсам</button>
+        </div>
+      </section>
+    </main>
+
+    <aside class="chat">
+      <div><strong>AI-помощник</strong></div>
+      <div class="history" id="chat-history"><div class="msg bot">Привет! Чем могу помочь по курсу?</div></div>
+      <div class="composer">
+        <input id="chat-input" placeholder="Задай вопрос..." />
+        <button class="btn" id="chat-send">Отправить</button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="modal-backdrop" id="modal">
+    <div class="modal">
+      <h3 id="test-title">Тест</h3>
+      <div id="questions"></div>
+      <div style="text-align:right; margin-top:12px;">
+        <button class="btn ghost" id="close-test">Отмена</button>
+        <button class="btn" id="submit-test">Отправить результат в Telegram</button>
+      </div>
     </div>
-
-    <div class="question">
-      <h3>2. 2 + 2 = ?</h3>
-      <label><input type="radio" name="q2" value="0"> 3</label><br>
-      <label><input type="radio" name="q2" value="1"> 4</label><br>
-      <label><input type="radio" name="q2" value="0"> 5</label><br>
-      <label><input type="radio" name="q2" value="0"> 6</label>
-    </div>
-
-    <div class="question">
-      <h3>3. Какой язык у браузеров по умолчанию?</h3>
-      <label><input type="radio" name="q3" value="0"> Python</label><br>
-      <label><input type="radio" name="q3" value="1"> JavaScript</label><br>
-      <label><input type="radio" name="q3" value="0"> Java</label><br>
-      <label><input type="radio" name="q3" value="0"> C++</label>
-    </div>
-
-    <div class="question">
-      <h3>4. Сколько континентов на Земле?</h3>
-      <label><input type="radio" name="q4" value="0"> 5</label><br>
-      <label><input type="radio" name="q4" value="1"> 7</label><br>
-      <label><input type="radio" name="q4" value="0"> 6</label><br>
-      <label><input type="radio" name="q4" value="0"> 8</label>
-    </div>
-
-    <div class="question">
-      <h3>5. Кто написал "Илиаду"?</h3>
-      <label><input type="radio" name="q5" value="1"> Гомер</label><br>
-      <label><input type="radio" name="q5" value="0"> Данте</label><br>
-      <label><input type="radio" name="q5" value="0"> Шекспир</label><br>
-      <label><input type="radio" name="q5" value="0"> Сократ</label>
-    </div>
-
-  </form>
-
-  <button onclick="checkAnswers()">Отправить</button>
-  <div id="result"></div>
-
-  <!-- Подключаем наш JS -->
-  <script src="Home.js"></script>
-
-  <!-- Telegram login widget -->
-  <script async src="https://telegram.org/js/telegram-widget.js?22"
-    data-telegram-login="mirzotilloyev_bot"
-    data-size="large"
-    data-onauth="onTelegramAuth(user)"
-    data-request-access="write">
-  </script>
+  </div>
 
   <script>
-    let telegramUser = null;
+    /* ========== Telegram Auth ========== */
     function onTelegramAuth(user) {
-      telegramUser = user;
-      alert("Вы вошли как " + user.first_name + " (id=" + user.id + ")");
+      console.log("TG user:", user);
+      localStorage.setItem("telegram_id", user.id);
+      document.querySelector(".actions").innerHTML = `<span>Привет, ${user.first_name} 👋</span>`;
     }
+
+    /* Demo courses */
+    /* ========== Demo data ========== */
+const COURSES = [
+  {
+    id:1,
+    title:'Введение в Python',
+    description:'Переменные, типы данных, базовый синтаксис',
+    lessons:[
+      {id:11, title:'Что такое Python', body:'Python — это...'},
+      {id:12, title:'Переменные', body:'Переменные хранят...'}
+    ],
+    test: {
+      title:'Тест: основы Python',
+      questions:[
+        {id:1, q:'Какой тип в Python для целых чисел?', options:['int','str','float'], answer:0},
+        {id:2, q:'Что выводит выражение print("Hi")?', options:['Hi','"Hi"','print("Hi")'], answer:0},
+        {id:3, q:'Что делает функция len("abc")?', options:['3','"abc"','ошибка'], answer:0}
+      ]
+    }
+  },
+  {
+    id:2,
+    title:'Веб-разработка',
+    description:'HTML, CSS, основы JS',
+    lessons:[
+      {id:21, title:'HTML основы', body:'HTML — структура веб-страницы...'},
+      {id:22, title:'CSS стилизация', body:'CSS задает стиль для HTML-элементов...'}
+    ],
+    test: {
+      title:'Тест: основы веб-разработки',
+      questions:[
+        {id:1, q:'Какой тег используется для ссылки?', options:['<a>','<link>','<href>'], answer:0},
+        {id:2, q:'Что делает CSS свойство color?', options:['Изменяет цвет текста','Изменяет фон','Изменяет размер'], answer:0},
+        {id:3, q:'Где выполняется JavaScript?', options:['В браузере','В Word','В Photoshop'], answer:0}
+      ]
+    }
+  },
+  {
+    id:3,
+    title:'Машинное обучение',
+    description:'Введение в ML',
+    lessons:[
+      {id:31, title:'Что такое ML', body:'ML — это область ИИ, которая обучает алгоритмы распознавать закономерности.'}
+    ],
+    test: {
+      title:'Тест: основы ML',
+      questions:[
+        {id:1, q:'Что такое обучающая выборка?', options:['Данные для обучения модели','Программа','Алгоритм'], answer:0},
+        {id:2, q:'Как называется задача предсказания чисел?', options:['Регрессия','Классификация','Кластеризация'], answer:0},
+        {id:3, q:'Нейронные сети вдохновлены...', options:['Работой мозга','Математикой','Физикой'], answer:0}
+      ]
+    }
+  },
+  {
+    id:4,
+    title:'Алгоритмы и структуры данных',
+    description:'Базовые алгоритмы и структуры',
+    lessons:[
+      {id:41, title:'Что такое алгоритм', body:'Алгоритм — это последовательность шагов для решения задачи.'},
+      {id:42, title:'Массивы и списки', body:'Структуры данных для хранения элементов.'}
+    ],
+    test: {
+      title:'Тест: алгоритмы и структуры данных',
+      questions:[
+        {id:1, q:'Что быстрее для доступа по индексу?', options:['Массив','Список','Очередь'], answer:0},
+        {id:2, q:'Как работает стек?', options:['LIFO','FIFO','Random'], answer:0},
+        {id:3, q:'Какой алгоритм сортировки самый быстрый в среднем?', options:['Быстрая сортировка','Пузырьковая','Вставками'], answer:0}
+      ]
+    }
+  },
+  {
+    id:5,
+    title:'SQL для начинающих',
+    description:'Базы данных и SQL',
+    lessons:[
+      {id:51, title:'Что такое база данных', body:'База данных — это организованная коллекция данных.'}
+    ],
+    test: {
+      title:'Тест: SQL основы',
+      questions:[
+        {id:1, q:'Какой SQL-запрос выводит все данные из таблицы users?', options:['SELECT * FROM users;','SHOW users;','GET users;'], answer:0},
+        {id:2, q:'Какой оператор фильтрует данные?', options:['WHERE','FILTER','IF'], answer:0},
+        {id:3, q:'Что делает команда INSERT?', options:['Добавляет данные','Удаляет данные','Обновляет данные'], answer:0}
+      ]
+    }
+  }
+];
+
+
+    const coursesEl = document.getElementById('courses');
+    function renderCourses(){
+      COURSES.forEach(c=>{
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `<div class="course-title">${c.title}</div><div class="meta">${c.description}</div><button class="btn" data-course="${c.id}">Открыть</button>`;
+        coursesEl.appendChild(div);
+      });
+    }
+    renderCourses();
+
+    let currentCourse=null;
+    document.addEventListener('click',e=>{
+      if(e.target.matches('[data-course]')) openCourse(Number(e.target.dataset.course));
+    });
+
+    function openCourse(id){
+      const c=COURSES.find(x=>x.id===id);
+      currentCourse=c;
+      document.getElementById('lesson-title').textContent=c.lessons[0].title;
+      document.getElementById('lesson-body').textContent=c.lessons[0].body;
+      document.getElementById('lesson-area').style.display='block';
+    }
+
+    document.getElementById('back-to-courses').onclick=()=>{document.getElementById('lesson-area').style.display='none';};
+
+    /* Test modal */
+    document.getElementById('start-test').onclick=()=>{
+      if(!currentCourse.test) return alert('Нет теста');
+      const qwrap=document.getElementById('questions'); qwrap.innerHTML='';
+      document.getElementById('test-title').textContent=currentCourse.test.title;
+      currentCourse.test.questions.forEach((q,i)=>{
+        const d=document.createElement('div');
+        d.innerHTML=`<p>${i+1}. ${q.q}</p>`+q.options.map((o,j)=>`<label><input type="radio" name="q${q.id}" value="${j}"> ${o}</label>`).join('<br>');
+        qwrap.appendChild(d);
+      });
+      document.getElementById('modal').style.display='flex';
+    };
+    document.getElementById('close-test').onclick=()=>document.getElementById('modal').style.display='none';
+
+    document.getElementById('submit-test').onclick=async()=>{
+      const t=currentCourse.test;
+      const answers=t.questions.map(q=>({qid:q.id,choice:Number(document.querySelector(`input[name="q${q.id}"]:checked`)?.value),correct:q.answer}));
+      const score=Math.round(answers.filter(a=>a.choice===a.correct).length/t.questions.length*100);
+      const telegram_id=localStorage.getItem("telegram_id");
+      try{
+        await fetch('/api/send-test-result',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({courseId:currentCourse.id,testTitle:t.title,score,answers,telegram_id})});
+        alert('Результат отправлен в Telegram!');
+      }catch(e){alert('Ошибка отправки');}
+      document.getElementById('modal').style.display='none';
+    };
+
+    /* Chat */
+    document.getElementById('chat-send').onclick=sendChat;
+    async function sendChat(){
+      const input=document.getElementById('chat-input'); const text=input.value.trim(); if(!text) return;
+      appendMsg('user',text); input.value='';
+      try{
+        const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:text}]})});
+        const d=await r.json(); appendMsg('bot',d.choices?.[0]?.message?.content ?? 'Нет ответа');
+      }catch(e){appendMsg('bot','Ошибка сервера');}
+    }
+    function appendMsg(kind,text){const d=document.createElement('div');d.className='msg '+kind;d.textContent=text;document.getElementById('chat-history').appendChild(d);}
   </script>
+    <script src="test.js"></script>
 </body>
 </html>
+
 
 
 
