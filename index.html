@@ -46,7 +46,7 @@
       </div>
       <div class="actions">
         <script async src="https://telegram.org/js/telegram-widget.js?22"
-          data-telegram-login="experimenti_bot"
+          data-telegram-login="mirzotilloyev_bot"
           data-size="large"
           data-onauth="onTelegramAuth(user)"
           data-request-access="write"></script>
@@ -161,9 +161,20 @@ async function sendChat(){
   }catch(e){appendMsg("bot","Ошибка сервера");}
 }
 function appendMsg(kind,text){const d=document.createElement("div");d.className="msg "+kind;d.textContent=text;document.getElementById("chat-history").appendChild(d);}
+
+
 </script>
+  <script>
+    let telegram_id = null;
+
+    function onTelegramAuth(user) {
+      telegram_id = user.id;
+      document.getElementById("userInfo").innerText =
+        `Вы вошли как ${user.first_name} (ID: ${user.id})`;
+        </script>
 </body>
 </html>
+
 
 
 
