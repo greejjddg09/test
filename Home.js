@@ -19,30 +19,28 @@ function renderTest(course) {
   container.innerHTML += html;
 }
 
-function checkTest(courseId) {
-  const course = COURSES.find((c) => c.id === courseId);
-  let correct = 0;
-  course.test.questions.forEach((q) => {
-    const selected = document.querySelector(
-      `input[name="q${q.id}"]:checked`
-    )?.value;
-    if (parseInt(selected) === q.answer) correct++;
-  });
+
 
   // Показываем пользователю результат
-  const resultText = `Ты ответил правильно на ${correct} из ${course.test.questions.length}`;
-  document.getElementById("testResult").innerText = resultText;
+function checkAnswers() {
+  let score = 0;
+  const form = document.forms['quizForm'];
+  const answer = form['q1'].value;
+  if (answer === "1") score++;
 
-  // Отправляем результат в backend
-  fetch("/api/send-test-result", {
+  document.getElementById("result").innerText =
+    "Ваш результат: " + score + "/1";
+
+  // отправляем результат + userId на сервер
+  fetch("/api/send", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      course: course.title,
-      correct: correct,
-      total: course.test.questions.length
+      result: score,
+      userId: telegramUser?.id
     })
   });
 }
+
 
 
