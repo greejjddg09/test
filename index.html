@@ -2,115 +2,44 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Тест на знание</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
-      background: #f9f9f9;
-    }
-    .question {
-      margin-bottom: 20px;
-    }
-    .question h3 {
-      margin: 0 0 10px;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    #result {
-      margin-top: 30px;
-      font-size: 18px;
-      font-weight: bold;
-    }
-  </style>
+  <title>Тест</title>
 </head>
 <body>
-  <h1>Пройди тест</h1>
+  <h1>Простой тест</h1>
 
   <form id="quizForm">
-    <div class="question">
-      <h3>1. Столица Франции?</h3>
-      <label><input type="radio" name="q1" value="0"> Лондон</label><br>
-      <label><input type="radio" name="q1" value="1"> Париж</label><br>
-      <label><input type="radio" name="q1" value="0"> Берлин</label><br>
-      <label><input type="radio" name="q1" value="0"> Мадрид</label>
-    </div>
-
-    <div class="question">
-      <h3>2. 2 + 2 = ?</h3>
-      <label><input type="radio" name="q2" value="0"> 3</label><br>
-      <label><input type="radio" name="q2" value="1"> 4</label><br>
-      <label><input type="radio" name="q2" value="0"> 5</label><br>
-      <label><input type="radio" name="q2" value="0"> 6</label>
-    </div>
-
-    <div class="question">
-      <h3>3. Какой язык у браузеров по умолчанию?</h3>
-      <label><input type="radio" name="q3" value="0"> Python</label><br>
-      <label><input type="radio" name="q3" value="1"> JavaScript</label><br>
-      <label><input type="radio" name="q3" value="0"> Java</label><br>
-      <label><input type="radio" name="q3" value="0"> C++</label>
-    </div>
-
-    <div class="question">
-      <h3>4. Сколько континентов на Земле?</h3>
-      <label><input type="radio" name="q4" value="0"> 5</label><br>
-      <label><input type="radio" name="q4" value="1"> 7</label><br>
-      <label><input type="radio" name="q4" value="0"> 6</label><br>
-      <label><input type="radio" name="q4" value="0"> 8</label>
-    </div>
-
-    <div class="question">
-      <h3>5. Кто написал "Илиаду"?</h3>
-      <label><input type="radio" name="q5" value="1"> Гомер</label><br>
-      <label><input type="radio" name="q5" value="0"> Данте</label><br>
-      <label><input type="radio" name="q5" value="0"> Шекспир</label><br>
-      <label><input type="radio" name="q5" value="0"> Сократ</label>
-    </div>
-
-    <button type="button" onclick="checkAnswers()">Отправить</button>
+    <p>2 + 2 = ?</p>
+    <label><input type="radio" name="q1" value="0"> 3</label><br>
+    <label><input type="radio" name="q1" value="1"> 4</label><br>
+    <label><input type="radio" name="q1" value="0"> 5</label><br>
   </form>
 
+  <button onclick="checkAnswers()">Отправить</button>
   <div id="result"></div>
 
-<script>
-  let telegramUser = null;
+  <!-- Подключаем наш JS -->
+  <script src="Home.js"></script>
 
-  function onTelegramAuth(user) {
-    telegramUser = user;
-    alert('Вы вошли как ' + user.first_name + ' (' + user.id + ')');
-  }
+  <!-- Telegram login widget -->
+  <script async src="https://telegram.org/js/telegram-widget.js?22"
+    data-telegram-login="cOoL5225_bot"
+    data-size="large"
+    data-onauth="onTelegramAuth(user)"
+    data-request-access="write">
+  </script>
 
-  function checkAnswers() {
-  let score = 0;
-  const form = document.forms['quizForm'];
-  for (let i = 1; i <= 5; i++) {
-    const answer = form['q' + i].value;
-    if (answer === "1") score++;
-  }
-
-  document.getElementById('result').innerText =
-    "Ваш результат: " + score + "/5";
-
-  // 🔥 Вот здесь мы передаем результат на сервер
-  fetch("/api/send", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ result: score })  // <-- тут передается score
-  });
-}
-</script>
-  
- 
+  <script>
+    let telegramUser = null;
+    function onTelegramAuth(user) {
+      telegramUser = user;
+      alert("Вы вошли как " + user.first_name + " (id=" + user.id + ")");
+    }
+  </script>
 </body>
 </html>
+
+</html>
+
 
 
 
