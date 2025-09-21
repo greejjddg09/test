@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   
     const text = `Ваш результат: ${score}/5 ✅`;
   
-    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    await fetch(`https://api.telegram.org/bot${7095220207:AAGbyb_Wz1qQJnEQzCN_RARB2K01srXcrRQ}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ chat_id: user_id, text })
@@ -18,3 +18,4 @@ export default async function handler(req, res) {
   }
 
   
+
