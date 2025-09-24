@@ -26,7 +26,7 @@ function checkAnswers() {
   let score = 0;
   const form = document.forms['quizForm'];
   const answer = form['q1'].value;
-  if (answer === "1") score++;
+  if (answer === "5") score++;
 
   document.getElementById("result").innerText =
     "Ваш результат: " + score + "/5";
@@ -41,6 +41,7 @@ function checkAnswers() {
     })
   });
 }
+
 
 
 
