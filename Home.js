@@ -22,30 +22,24 @@ function renderTest(course) {
 
 
   // Показываем пользователю результат
- function checkAnswers() {
-      let score = 0;
-      questions.forEach((item, i) => {
-        const selected = document.querySelector(`input[name="q${i}"]:checked`);
-        if (selected && parseInt(selected.value) === item.answer) {
-          score++;
-        }
-      });
-      document.getElementById("result").innerText = `Ваш результат: ${score}/${questions.length}`;
-    }
-  
-    document.getElementById("result").innerText =
-      "Ваш результат: " + score + "/" + total;
-  }
-  
-    // отправляем результат + userId на сервер
-    fetch("/api/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        result: score,
-        userId: telegramUser?.id
-      })
-    });
+function checkAnswers() {
+  let score = 0;
+  const form = document.forms['quizForm'];
+  const answer = form['q1,q2,q3,q4,q5'].value;
+  if (answer === "1") score++;
+
+  document.getElementById("result").innerText =
+    "Ваш результат: " + score + "/5";
+
+  // отправляем результат + userId на сервер
+  fetch("/api/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      result: score,
+      userId: telegramUser?.id
+    })
+  });
 }
 
 
