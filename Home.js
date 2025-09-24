@@ -29,7 +29,7 @@ function checkAnswers() {
   if (answer === "1") score++;
 
   document.getElementById("result").innerText =
-    "Ваш результат: " + score + "/1";
+    "Ваш результат: " + score + "/5";
 
   // отправляем результат + userId на сервер
   fetch("/api/send", {
@@ -41,6 +41,7 @@ function checkAnswers() {
     })
   });
 }
+
 
 
 
