@@ -25,7 +25,7 @@ function renderTest(course) {
 function checkAnswers() {
   let score = 0;
   const form = document.forms['quizForm'];
-  const answer = form['q1,q2,q3,q4,q5'].value;
+  const answer = form['q1'].value;
   if (answer === "1") score++;
 
   document.getElementById("result").innerText =
@@ -41,5 +41,6 @@ function checkAnswers() {
     })
   });
 }
+
 
 
