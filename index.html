@@ -165,24 +165,12 @@ function appendMsg(kind,text){const d=document.createElement("div");d.className=
 
 </script>
   <script>
-    let telegram_id = null;
-
+    let telegramUser = null;
     function onTelegramAuth(user) {
-      telegram_id = user.id;
-      document.getElementById("userInfo").innerText =
-        `Вы вошли как ${user.first_name} (ID: ${user.id})`;
-        </script>
-  <script src="Home.js"></script>
+      telegramUser = user;
+      alert("Вы вошли как " + user.first_name + " (id=" + user.id + ")");
+    }
+  </script>
+        <script src="Home.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
