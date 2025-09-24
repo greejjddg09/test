@@ -22,14 +22,15 @@ function renderTest(course) {
 
 
   // Показываем пользователю результат
-function checkAnswers() {{
-    let score = 0;
-    const total = 5; // всего вопросов
-    const form = document.forms['quizForm'];
-  
-    for (let i = 1; i <= total; i++) {
-      const answer = form['q' + i].value;
-      if (answer === "1") score++;
+ function checkAnswers() {
+      let score = 0;
+      questions.forEach((item, i) => {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        if (selected && parseInt(selected.value) === item.answer) {
+          score++;
+        }
+      });
+      document.getElementById("result").innerText = `Ваш результат: ${score}/${questions.length}`;
     }
   
     document.getElementById("result").innerText =
@@ -46,4 +47,5 @@ function checkAnswers() {{
       })
     });
 }
+
 
