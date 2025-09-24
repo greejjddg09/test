@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   if (req.method === "POST") {
-    const { result, userId } = req.body;
+    const { score, total, userId } = req.body;
 
     const BOT_TOKEN = process.env.BOT_TOKEN;
     const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
@@ -10,7 +10,7 @@ export default async function handler(req, res) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chat_id: userId,
-        text: `Ваш результат: ${result}/1`
+        text: `Ваш результат: ${score}/${total}`
       })
     });
 
@@ -20,4 +20,3 @@ export default async function handler(req, res) {
     res.status(405).end();
   }
 }
-
