@@ -23,18 +23,20 @@ function renderTest(course) {
 
   // Показываем пользователю результат
 function checkAnswers() {
-  let score = 0;
-  const form = document.forms['quizForm'];
+      let score = 0;
+      const form = document.forms['quizForm'];
 
-  // цикл по вопросам от q1 до q5
-  for (let i = 1; i <= 5; i++) {
-    const answer = form['q' + i].value;
-    if (answer === "1") {
-      score++;
+      // цикл по вопросам от q1 до q5
+      for (let i = 1; i <= 5; i++) {
+        const answer = form['q' + i].value;
+        if (answer === "1") {
+          score++;
+        }
+      }
+
+      document.getElementById("result").innerText =
+        "Ваш результат: " + score + "/5";
     }
-  }
-  document.getElementById("result").innerText =
-    "Ваш результат: " + score + "/1";
 
   // отправляем результат + userId на сервер
   fetch("/api/send", {
@@ -46,6 +48,7 @@ function checkAnswers() {
     })
   });
 }
+
 
 
 
