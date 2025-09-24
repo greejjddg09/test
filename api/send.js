@@ -1,19 +1,23 @@
-function checkAnswers() {
-  let score = 0;
-  const form = document.forms['quizForm'];
-  const answer = form['q1'].value;
-  if (answer === "1") score++;
+export default async function handler(req, res) {
+  if (req.method === "POST") {
+    const { result, userId } = req.body;
 
-  document.getElementById("result").innerText =
-    "Ваш результат: " + score + "/1";
+    const BOT_TOKEN = process.env.BOT_TOKEN;
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
-  // отправляем результат + userId на сервер
-  fetch("/api/send", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      result: score,
-      userId: telegramUser?.id
-    })
-  });
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: userId,
+        text: `Ваш результат: ${result}/1`
+      })
+    });
+
+    const data = await response.json();
+    res.status(200).json(data);
+  } else {
+    res.status(405).end();
+  }
 }
+
