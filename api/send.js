@@ -10,7 +10,7 @@ export default async function handler(req, res) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chat_id: userId,
-        text: `Ваш результат: ${result}/1`
+        text: `Ваш результат: ${result}/5`
       })
     });
 
@@ -20,3 +20,4 @@ export default async function handler(req, res) {
     res.status(405).end();
   }
 }
+
